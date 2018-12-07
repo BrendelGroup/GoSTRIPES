@@ -23,7 +23,7 @@ singularity exec gostripes.simg make
 
 (assuming you have prepared a suitable makefile in your working directory).
 If you want to just run particular programs pre-installed in the container,
-take a look at [xworkStripes](../bin/xworkStripes).
+take a look at [xworkStripes](xworkStripes).
 That scripts set up a variable _rws_ ("run with singularity") in your working shell,
 which allows you to run commands like the following:
 
