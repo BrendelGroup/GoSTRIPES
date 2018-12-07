@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# xworkStripes:  a little script to make workw with GoSTRIPES easier ...
+#              Alls this does is to set the variable rws (run with singularity)
+#              so that you can run commands from the GoSTRIPES container by
+#              simply preceding them with $rws .
+#
+# Last update: December 7, 2018.  Volker Brendel.
+#
+
+boundDirset=0
+imageset=0
+alliswell=1
+
+OPTIND=1
+while getopts "b:i:" optname
+  do
+    case "$optname" in
+      "b")
+        boundDirset=1
+        boundDir=$OPTARG
+        ;;
+      "i")
+        imageset=1
+        GoSTRIPESimage=$OPTARG
+        ;;
+      "?")
+        echo "Unknown option $OPTARG."
+        ;;
+      ":")
+        echo "No argument value provided for option $OPTARG."
+        ;;
+      *)
+      # Bad luck!?:
+        echo "An unknown error occurred while processing options."
+        ;;
+    esac
+  done
+
+if [[ $boundDirset == 0 || $imageset == 0 ]]
+  then
+    echo ""
+    echo "USAGE: source xworkSTRIPES -b boundDir -i GoSTRIPESimage"
+    echo ""
+    echo "Required arguments:"
+    echo ""
+    echo "        boundDir = your working directory, accessible to GoSTRIPES"
+    echo "        GoSTRIPESimage = full path to the GoSTRIPES Singularity image"
+    echo ""
+    echo "If you see this message, then something was not quite right."
+    echo "  boundDIR was set to: $boundDIR."
+    echo "  GoSTRIPESimage was set to: $GoSTRIPESimage."
+    echo ""
+    alliswell=0
+fi
+
+if [[ $alliswell == 1 ]]
+  then
+    echo ""
+    echo ""
+    echo "Ready to go STRIPES!"
+    echo ""
+    echo "Your current directory:"
+    echo "$HOSTNAME"; pwd; echo""; date; echo""
+    rws="singularity exec -B $boundDir $GoSTRIPESimage"
+
+    echo "The rws variable has been set to:  $rws."
+    echo 'Run a command within the GoSTRIPES container by preceding it with  $rws .'
+    echo ""
+    echo "Example:"
+    echo " which fastq-interleave"
+    echo "will show you if you have fastq-interleave on your host system."
+    echo ' $rws fastq-interleave'
+    echo "will show you help information for the program, already installed in the GoSTRIPES image."
+    echo ""
+    echo "NOTE: You must invoke xworkStripes with 'source'."
+    echo '      Otherwise $rws will not be available in your shell.'
+    echo '      You might consider setting $rws as an enviroment variable.'
+    export rws
+fi
