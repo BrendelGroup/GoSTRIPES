@@ -129,11 +129,6 @@ From: ubuntu:18.04
     cd genometools-1.5.10/
     make && make install
 
-    echo 'Installing GoSTRIPES from git://github.com/BrendelGroup/GoSTRIPES '
-    #### Install
-    cd /opt
-    git clone git://github.com/BrendelGroup/GoSTRIPES
-
 
 ### All things R
 
