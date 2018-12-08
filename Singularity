@@ -71,15 +71,13 @@ From: ubuntu:18.04
 
 ### Read mapping
 
-    echo 'Installing bwa from https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2/download '
+    echo 'Installing bwa from https://github.com/lh3/bwa '
     ###### Install
     cd /opt
-    wget --content-disposition https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2/download
-    tar -xjf bwa-0.7.17.tar.bz2
-    cd bwa-0.7.17/
+    git clone https://github.com/lh3/bwa.git
+    cd bwa
     make
     cp bwa /usr/local/bin/
-    cd ../
 
     echo 'Installing BOWTIE2 from http://bowtie-bio.sourceforge.net/bowtie2 '
     ###### Install
