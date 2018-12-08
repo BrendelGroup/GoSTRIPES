@@ -30,6 +30,75 @@ From: ubuntu:18.04
     apt -y install python3-pip
 
 
+### Read quality control
+
+    echo 'Installing FASTQC from http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ '
+    #### Install
+    cd /opt
+    wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.8.zip
+    unzip fastqc_v0.11.8.zip
+    chmod +x FastQC/fastqc
+
+    echo 'Installing TRIM_GALORE from http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/ '
+    #### Prerequisites
+    pip install --upgrade cutadapt
+    #### Install
+    cd /opt
+    wget https://github.com/FelixKrueger/TrimGalore/archive/0.5.0.zip
+    mv 0.5.0.zip TrimGalore-0.5.0.zip
+    unzip TrimGalore-0.5.0.zip
+
+    echo 'Installing Trimmomatic from http://www.usadellab.org/cms/index.php?page=trimmomatic '
+    #### Install
+    cd /opt
+    wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip
+    unzip Trimmomatic-0.38.zip
+#   Use:	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar
+
+
+### Read manipulation
+
+    echo 'Installing SRATOOLKIT from http://www.ncbi.nlm.nih.gov/books/NBK158900/ '
+    ###### Install
+    cd /opt
+    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.9.2/sratoolkit.2.9.2-ubuntu64.tar.gz
+    tar -xzf sratoolkit.2.9.2-ubuntu64.tar.gz
+
+    echo 'Installing UMI-tools from https://github.com/CGATOxford/UMI-tools '
+    #### Install
+    pip install --upgrade umi-tools
+
+
+### Read mapping
+
+    echo 'Installing bwa from https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2/download '
+    ###### Install
+    cd /opt
+    wget --content-disposition https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2/download
+    tar -xjf bwa-0.7.17.tar.bz2
+    cd bwa-0.7.17/
+    make
+    cp bwa /usr/local/bin/
+    cd ../
+
+    echo 'Installing BOWTIE2 from http://bowtie-bio.sourceforge.net/bowtie2 '
+    ###### Install
+    apt -y install bowtie2
+
+    echo 'Installing hisat2 from https://ccb.jhu.edu/software/hisat2/ '
+    ###### Install
+    cd /opt
+    git clone https://github.com/infphilo/hisat2 hisat2
+    cd hisat2
+    make
+
+    echo 'Installing STAR from https://github.com/alexdobin/STAR '
+    ###### Install
+    cd /opt
+    git clone https://github.com/alexdobin/STAR
+
+
+### Alignment utilities
 
     echo 'Installing HTSLIB from http://www.htslib.org/ '
     #### Prerequisites
@@ -49,46 +118,8 @@ From: ubuntu:18.04
     cd samtools
     make && make install
 
-    echo 'Installing BOWTIE2 from http://bowtie-bio.sourceforge.net/bowtie2 '
-    ###### Install
-    apt -y install bowtie2
 
-    echo 'Installing hisat2 from https://ccb.jhu.edu/software/hisat2/ '
-    ###### Install
-    cd /opt
-    git clone https://github.com/infphilo/hisat2 hisat2
-    cd hisat2
-    make
-
-    echo 'Installing STAR from https://github.com/alexdobin/STAR '
-    ###### Install
-    cd /opt
-    git clone https://github.com/alexdobin/STAR
-
-    echo 'Installing FASTQC from http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ '
-    #### Install
-    cd /opt
-    wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.8.zip
-    unzip fastqc_v0.11.8.zip
-    chmod +x FastQC/fastqc
-
-    echo 'Installing SRATOOLKIT from http://www.ncbi.nlm.nih.gov/books/NBK158900/ '
-    ###### Install
-    cd /opt
-    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.9.2/sratoolkit.2.9.2-ubuntu64.tar.gz
-    tar -xzf sratoolkit.2.9.2-ubuntu64.tar.gz
-
-    echo 'Installing TRIM_GALORE from http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/ '
-    #### Prerequisites
-    pip install --upgrade cutadapt
-    #### Install
-    cd /opt
-    wget https://github.com/FelixKrueger/TrimGalore/archive/0.5.0.zip
-    mv 0.5.0.zip TrimGalore-0.5.0.zip
-    unzip TrimGalore-0.5.0.zip
-
-    echo 'Installing UMI-tools from https://github.com/CGATOxford/UMI-tools '
-    pip install --upgrade umi-tools
+### Genome utilities
 
     echo 'Installing GENOMETOOLS from from http://genometools.org/ '
     #### Prerequisites
@@ -100,6 +131,13 @@ From: ubuntu:18.04
     cd genometools-1.5.10/
     make && make install
 
+    echo 'Installing GoSTRIPES from git://github.com/BrendelGroup/GoSTRIPES '
+    #### Install
+    cd /opt
+    git clone git://github.com/BrendelGroup/GoSTRIPES
+
+
+### All things R
 
     echo 'Installing R'
     #### 
@@ -136,9 +174,27 @@ From: ubuntu:18.04
     Rscript R2install
 
 
+### Tools to analyze mapped reads
+
+    echo 'Installing RSEM from http://deweylab.github.io/RSEM/ ' 
+    #### Install
+    cd /opt
+    git clone https://github.com/deweylab/RSEM.git
+    cd RSEM
+    make
+    make ebseq
+    make install
+
+    echo 'Installing GoSTRIPES from git://github.com/BrendelGroup/GoSTRIPES '
+    #### Install
+    cd /opt
+    git clone git://github.com/BrendelGroup/GoSTRIPES
+
+
 %environment
     export LC_ALL=C
     export PATH=$PATH:/opt/FastQC
+    export PATH=$PATH:/opt/GoSTRIPES/bin
     export PATH=$PATH:/opt/hisat2
     export PATH=$PATH:/opt/sratoolkit.2.8.2-ubuntu64/bin
     export PATH=$PATH:/opt/STAR/bin/Linux_x86_64
