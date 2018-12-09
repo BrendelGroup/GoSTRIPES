@@ -55,6 +55,16 @@ From: ubuntu:18.04
     unzip Trimmomatic-0.38.zip
 #   Use:	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar
 
+    echo 'Installing TagDust from https://sourceforge.net/projects/tagdust/files/latest/download '
+    #### Install
+    cd /opt
+    wget --content-disposition https://sourceforge.net/projects/tagdust/files/tagdust-2.33.tar.gz/download
+    tar -xzf tagdust-2.33.tar.gz 
+    cd tagdust-2.33/
+    ./configure
+    make
+    make install
+
 
 ### Read manipulation
 

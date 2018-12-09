@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # selectReadsByPattern.pl
-# Version of December 8, 2018.  Volker Brendel
+# Version of December 9, 2018.  Volker Brendel
 
 use strict;
 use Getopt::Std;
@@ -11,7 +11,7 @@ my $USAGE="\nUsage: $0 -m pattern2match [-p] [-i] [-o outfile] -r readfile\n
    -m pattern2match: e.g., -m NNNNNNNNTATATGGG
    -p              : input from readfile is paired reads (interleaved FASTQ)
    -i              : write output in interleaved format
-   -o outifle      : stem of output filename(s)
+   -o outfile      : stem of output filename(s)
    -r readfile     : input read file (FASTQ; must be interleaved if
                       input is read pairs)
 
