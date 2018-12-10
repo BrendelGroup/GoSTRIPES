@@ -41,9 +41,7 @@ From: ubuntu:18.04
 
     echo 'Installing TRIM_GALORE from http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/ '
     #### Prerequisites
-    pip install --upgrade cutadapt
-    # Run cutadapt with python3 to allow the multi-core option ...
-    sed -i -e "1 s:#.*:#\!/usr/bin/python3:" /usr/local/bin/cutadapt
+    pip3 install --upgrade cutadapt
     #### Install
     cd /opt
     wget https://github.com/FelixKrueger/TrimGalore/archive/0.5.0.zip
