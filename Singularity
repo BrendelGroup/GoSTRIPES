@@ -43,7 +43,7 @@ From: ubuntu:18.04
     #### Prerequisites
     pip install --upgrade cutadapt
     # Run cutadapt with python3 to allow the multi-core option ...
-    sed -e "1 s:#.*:#\!/usr/bin/python3:" /usr/local/bin/cutadapt
+    sed -i -e "1 s:#.*:#\!/usr/bin/python3:" /usr/local/bin/cutadapt
     #### Install
     cd /opt
     wget https://github.com/FelixKrueger/TrimGalore/archive/0.5.0.zip
