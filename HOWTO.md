@@ -29,7 +29,7 @@ following in your shell (just copy/paste what the script shows):
 source ~/GoSTRIPES/bin/xworkStripes -b /scratch/AWESOME -i /scratch/AWESOME/STRIPES/gostripes.simg
 ```
 
-This command will set up the variabl _rws_. In our example,
+This command will set up the variable _rws_. In our example,
 
 ```bash
 echo $rws
@@ -40,6 +40,8 @@ should return
 singularity exec -B /scratch/AWESOME /scratch/AWESOME/STRIPES/gostripes.simg
 ```
 
+## Executing the workflow
+
 Unless something odd happened, you should now be able to run the demo as
 follows:
 
@@ -48,7 +50,8 @@ cd STRIPES/SAMPLE
 $rws make
 ```
 
-_$rws <command>_ will execute any _<command>_ within the GoSTRIPES container.
-In our workflow, _make_ will execute the provided Makefile, which takes care
-of everything else. Because all required programs and scripts are bundled in
-the container, there is nothing else for you to do in terms of installation.
+_$rws \<command\>_ will execute any _\<command\>_ within the GoSTRIPES
+container. In our workflow, _make_ will invoke the provided Makefile, which
+takes care of everything else. Because all required programs and scripts are
+bundled in the container, there is nothing else for you to do in terms of
+installation.
