@@ -1,0 +1,14 @@
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/fungi/Saccharomyces_cerevisiae/latest_assembly_versions/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/fungi/Saccharomyces_cerevisiae/latest_assembly_versions/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.gff.gz
+gunzip *gz
+cp GCF_000146045.2_R64_genomic.gff GCF_000146045.2_R64_genomic.gffORIG
+sed -e "s/	region	/	chromosome	/;" GCF_000146045.2_R64_genomic.gffORIG > GCF_000146045.2_R64_genomic.gff
+
+#rRNA coding regions were collected from 
+#
+#	https://www.yeastgenome.org/search?category=locus&feature_type=rRNA_gene&page=0&q=rRNA_gene
+#
+#and saved as rna_coding.fasta. The file is used for removing rRNA contaminants
+#from the reads using tagdust.
+
+ln -rs rna_coding.fasta Sc_grRNA.fa

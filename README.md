@@ -24,14 +24,15 @@ singularity exec gostripes.simg make
 (assuming you have prepared a suitable makefile in your working directory).
 If you want to just run particular programs pre-installed in the container,
 take a look at [xworkStripes](./bin/xworkStripes).
-That script sets up a variable _rws_ ("run with singularity") in your working shell,
-which allows you to run commands like the following:
+That script sets up a variable _rws_ ("run with singularity") in your working
+shell, which allows you to run commands like the following:
 
 ```
 $rws fastq-interleave
 ```
 
-where _fastq-interleave_ is just one of many programs pre-installed in the container.
+where _fastq-interleave_ is just one of many programs pre-installed in the
+container. Please see the [HOWTO](./HOWTO.md) document for a worked example.
 
 
 ## Reference
