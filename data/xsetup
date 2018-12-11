@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+
+echo "Presumably you see this file because you already cloned GoSTRIPES"
+echo "by the following commands (assuming for this example that your cloned"
+echo "into your home directory (~):"
+echo ""
+echo "  cd"
+echo "  git clone https://github.com/BrendelGroup/GoSTRIPES"
+echo ""
+echo "To set up a working directory, go to some clean directory and"
+echo "execute this script, e.g."
+echo ""
+echo "  cd /projects/TRYgoSTRIPES"
+echo "  ~/GoSTRIPES/data/xsetup"
+echo ""
+echo "This will put required data from the GoSTRIPES data directory"
+echo "and required repositories (including Singularity Hub) into"
+echo "your current working directory."
+echo ""
+
+installdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+workingdir="$( pwd )"
+
+mkdir ./STRIPES
+cd ./STRIPES
+singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
+
+mkdir ScGENOME
+cd ScGENOME
+cp ${installdir}/ScGENOME/0README ./
+cp ${installdir}/ScGENOME/rna_coding.fasta ./
+source 0README
+cd ..
+
+cp -r ${installdir}/SAMPLE ./
+
+echo "Here we are and this is what we have now:"
+echo ""
+pwd
+ls -RC
+
+echo ""
+echo "We are ready!"
+echo ""
+echo 'Execute the following line, which will set up $rws as a shortcut to'
+echo "run commands using the gostripes.simg container."
+echo ""
+echo "source ${installdir}/../bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/gostripes.simg"
+echo ""
+echo "Indeed, now the following will run the demo workflow:"
+echo ""
+echo "cd STRIPES/SAMPLE"
+echo '$rws make -n'
+echo ""
+echo "After you have inspected the output, you can run in succession"
+echo ""
+echo "$rws make cleanup"
+echo "$rws make finishup"
+echo ""
+echo "which cleans up your working directory. The ultimate product of our"
+echo "workflow will be the mapping of the cleaned-up read pairs in the"
+echo ".bam and .sam files in the alignments directory."
+
