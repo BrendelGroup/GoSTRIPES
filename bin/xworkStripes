@@ -5,7 +5,7 @@
 #              so that you can run commands from the GoSTRIPES container by
 #              simply preceding them with $rws .
 #
-# Last update: December 7, 2018.  Volker Brendel.
+# Last update: December 12, 2018.  Volker Brendel.
 #
 
 boundDirset=0
@@ -62,7 +62,7 @@ if [[ $alliswell == 1 ]]
     echo ""
     echo "Your current directory:"
     echo "$HOSTNAME"; pwd; echo""; date; echo""
-    rws="singularity exec -B $boundDir $GoSTRIPESimage"
+    rws="singularity exec -e -B $boundDir $GoSTRIPESimage"
 
     echo "The rws variable has been set to:  $rws."
     echo 'Run a command within the GoSTRIPES container by preceding it with  $rws .'
