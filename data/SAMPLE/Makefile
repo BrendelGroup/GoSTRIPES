@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: December 11, 2018.
+# Version: December 14, 2018.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -158,7 +158,7 @@ ifeq ("$(wildcard ./alignments)","")
 	mkdir alignments
 endif
 	samtools sort -n ${SAMPLE}_proper.bam | \
-	samtools fixmate -r - - | samtools sort - | samtools rmdup - alignments/${SAMPLE}.bam
+	samtools fixmate -rm - - | samtools sort - | samtools markdup -r - alignments/${SAMPLE}.bam
 
 alignments/${SAMPLE}.sam:	alignments/${SAMPLE}.bam
 	samtools view -h alignments/${SAMPLE}.bam > alignments/${SAMPLE}.sam
