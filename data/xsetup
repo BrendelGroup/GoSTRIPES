@@ -33,6 +33,7 @@ cp ${installdir}/ScGENOME/rna_coding.fasta ./
 source 0README
 cd ..
 
+cp -r ${installdir}/downloads ./
 cp -r ${installdir}/SAMPLE ./
 
 echo "Here we are and this is what we have now:"
