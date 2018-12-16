@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: December 14, 2018.
+# Version: December 16, 2018.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -20,8 +20,9 @@
 # to point to data source and optionally adjust other parameters to fit your
 # system and preferences.
 
-RAWREAD1 = downloads/SAMPLE_R1.fastq
-RAWREAD2 = downloads/SAMPLE_R2.fastq
+BASEDIR  = ${CURDIR}/..
+RAWREAD1 = ${BASEDIR}/downloads/SAMPLE_R1.fastq
+RAWREAD2 = ${BASEDIR}/downloads/SAMPLE_R2.fastq
 
 UMI     = NNNNNNNN
 ADAPTER = TATAGGG
@@ -30,11 +31,10 @@ SAMPLE  = demo
 
 # Genome file locations:
 
-BASEDIR     = ..
-GENOME_DIR  = ScGENOME
-GENOME_FILE = GCF_000146045.2_R64_genomic.fna
-GENOME_GFF  = GCF_000146045.2_R64_genomic.gff
-RNAfile     = ${BASEDIR}/${GENOME_DIR}/Sc_grRNA.fa
+GENOME_DIR  = ${BASEDIR}/ScGENOME
+GENOME_FILE = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.fna
+GENOME_GFF  = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.gff
+RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
 
 
 # Options for programs called in the GoSTRIPES workflow:
@@ -52,12 +52,12 @@ THREADS               = 6
 ################################################################################
 
 
-all:	setup STARdir/${GENOME_DIR} \
+all:	setup \
 	select_${SAMPLE}_R1.fq ${SAMPLE}_R1umi.fq ${SAMPLE}_R1noa.fq ${SAMPLE}_R1trm.fq \
  	select_${SAMPLE}_R2.fq ${SAMPLE}_R2umi.fq ${SAMPLE}_R2noa.fq ${SAMPLE}_R2trm.fq \
 	${SAMPLE}_tagdusted_READ1.fq ${SAMPLE}_tagdusted_READ2.fq \
 	fastqc1 fastqc2 ${SAMPLE}.stats \
-	STARdir/${GENOME_DIR}/SAindex STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam \
+	${GENOME_DIR}/STAR/SAindex STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam \
 	${SAMPLE}_proper.bam alignments/${SAMPLE}.bam alignments/${SAMPLE}.sam
 
 .PHONY:	
@@ -127,28 +127,22 @@ $(SAMPLE).stats:	$(SAMPLE)_R1noa.fq $(SAMPLE)_R2noa.fq \
 
 ### STAR alignment.
 #
-STARdir/${GENOME_DIR}:
+
+${GENOME_DIR}/STAR/SAindex:	${GENOME_FILE}
+ifeq ("$(wildcard ${GENOME_DIR}/STAR)","")
+	mkdir ${GENOME_DIR}/STAR
+endif
+	cd ${GENOME_DIR}/STAR && \
+	STAR --runMode genomeGenerate --runThreadN ${THREADS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
+
+STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	${GENOME_DIR}/STAR/SAindex  $(SAMPLE)_tagdusted_READ1.fq $(SAMPLE)_tagdusted_READ2.fq
 ifeq ("$(wildcard ./STARdir)","")
 	mkdir STARdir
 endif
-ifeq ("$(wildcard ./STARdir/${GENOME_DIR})","")
-	mkdir STARdir/${GENOME_DIR}
-endif
-
-STARdir/${GENOME_DIR}/${GENOME_FILE}:	STARdir/${GENOME_DIR}
-ifeq ("$(wildcard ./STARdir/${GENOME_DIR}/${GENOME_FILE})","")
-	ln -rs ${BASEDIR}/${GENOME_DIR}/${GENOME_FILE} STARdir/${GENOME_DIR}/${GENOME_FILE}
-endif
-
-STARdir/${GENOME_DIR}/SAindex:	STARdir/${GENOME_DIR}/${GENOME_FILE}
-	cd STARdir && \
-	STAR --runMode genomeGenerate --runThreadN ${THREADS} --genomeDir ${GENOME_DIR} --genomeFastaFiles ${GENOME_DIR}/${GENOME_FILE}
-
-STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	STARdir/${GENOME_DIR}/SAindex  $(SAMPLE)_tagdusted_READ1.fq $(SAMPLE)_tagdusted_READ2.fq
 	cd STARdir && \
 	STAR --runMode alignReads --limitBAMsortRAM 19114876484 --runThreadN ${THREADS} \
 		--outSAMtype BAM SortedByCoordinate --outSAMorder Paired  --outFileNamePrefix ${SAMPLE}_STAR_ \
-		--genomeDir ${GENOME_DIR}  --readFilesIn ../$(SAMPLE)_tagdusted_READ1.fq ../$(SAMPLE)_tagdusted_READ2.fq
+		--genomeDir ${GENOME_DIR}/STAR  --readFilesIn ../$(SAMPLE)_tagdusted_READ1.fq ../$(SAMPLE)_tagdusted_READ2.fq
 
 ${SAMPLE}_proper.bam:	STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam
 	samtools view -b -f 2 -F 256 -@ ${THREADS} STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam > ${SAMPLE}_proper.bam
