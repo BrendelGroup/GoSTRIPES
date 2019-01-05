@@ -11,8 +11,8 @@ my $USAGE="\nUsage: $0 -f read1file -t trimmedread1file -r read2file -o outfilen
 
 ** This script compares read1file and trimmedread1file fastq input files and
    selects read1file entries that have been 5' adapter trimmed (as shown in
-   trimmedread1file). Output are interleaved fastq files trm-outfilename.fastq and
-   unt-outfilename.fastq, which show  the trimmed and untrimmed reads, respectively,
+   trimmedread1file). Output are interleaved fastq files trm_outfilename.fastq and
+   unt_outfilename.fastq, which show  the trimmed and untrimmed reads, respectively,
    in each case paired with the correspond read2file records. 
 
    Stdout shows the trimmed sequences and remainders for all trimmed read1file
