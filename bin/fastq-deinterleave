@@ -1,0 +1,27 @@
+#! /bin/bash
+
+test $# = 1 || {
+    cat <<EOF
+Usage: $0 x
+or:    $0 x
+
+Takes x.fastq or x.fq (text or gzipped) interleaved fastq file and
+writes output to separate x_R1.fq x_R2.fq files.
+EOF
+    exit
+}
+
+if [[ ! -e $1.fastq ]]; then
+  if [[ ! -e $1.fq ]]; then
+    echo "Problem: neither $1.fastq nor $1.fq exist. Please specify a valid input file."
+    exit
+  fi
+  infile=$1.fq
+else
+  infile=$1.fastq
+fi
+
+
+(gzip -cdf $infile | paste - - - - - - - -) \
+    | tee >(cut -f 1-4 | tr '\t' '\n' > $1_R1.fq) \
+    | cut -f 5-8 | tr '\t' '\n' > $1_R2.fq

@@ -1,0 +1,20 @@
+#! /bin/bash
+
+test $# = 2 || {
+    cat <<EOF
+Usage: $0 x_R1 x_R2
+or:    $0 x_R1.gz x_R2.gz
+
+Takes paired fastq files x_R1 and x_R2 and writes them to stdout as one
+interleaved stream (each read1 fastq entry of four lines followed by the
+corresponding read2 fastq entry). Input can be gzipped.
+Note: There is no error checking on the input - make sure you have properly
+      paired x_R1 and x_R2 input.
+Note: The arguments can be any file names, but typically they would be
+      something like "sample_R1.fq" or "sample_R1.fastq."
+EOF
+    exit
+}
+
+paste < (gzip -cdf "$1" | paste - - - -) < (gzip -cdf "$2" | paste - - - -) |
+    tr '\t' '\n'
