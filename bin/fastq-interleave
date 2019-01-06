@@ -16,5 +16,5 @@ EOF
     exit
 }
 
-paste < (gzip -cdf "$1" | paste - - - -) < (gzip -cdf "$2" | paste - - - -) |
+paste <(gzip -cdf "$1" | paste - - - -) <(gzip -cdf "$2" | paste - - - -) |
     tr '\t' '\n'
