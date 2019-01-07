@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: January 6, 2019.
+# Version: January 7, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -66,7 +66,7 @@ all:	setup fastqc1 fastqc2 \
 	${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq \
 	${SAMPLE}_clean.fastq \
 	${SAMPLE}_proper.bam \
- 	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq \
+ 	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq ${SAMPLE}_stats \
 	alignments/${SAMPLE}.sam \
 	alignments/Scrubbed-${SAMPLE}.sam
 
@@ -165,11 +165,11 @@ FastQC/$(SAMPLE)_clean_R2_fastqc/fastqc_data.txt:	$(SAMPLE)_clean_R2.fq
 
 ### Generate and print basic sample statistics.
 #
-#$(SAMPLE).stats:	$(SAMPLE)_raw_R1.fq $(SAMPLE)_raw_R2.fq \
-#			FastQC/$(SAMPLE)_noa_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_noa_R1_fastqc/fastqc_data.txt \
-#			$(SAMPLE)_tagdusted_READ1.fq $(SAMPLE)_tagdusted_READ2.fq \
-#			FastQC/$(SAMPLE)_tagdusted_READ1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_tagdusted_READ2_fastqc/fastqc_data.txt
-#	sstats-pe.sh $(SAMPLE)
+$(SAMPLE).stats:	$(SAMPLE)_raw_R1.fq $(SAMPLE)_raw_R2.fq \
+			FastQC/$(SAMPLE)_raw_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_raw_R2_fastqc/fastqc_data.txt \
+ 			$(SAMPLE)_clean_R1.fq $(SAMPLE)_clean_R2.fq \
+ 			FastQC/$(SAMPLE)_clean_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_clean_R2_fastqc/fastqc_data.txt
+	sstats-pe.sh $(SAMPLE)
 
 
 ### STAR alignment.
