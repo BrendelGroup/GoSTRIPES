@@ -86,10 +86,10 @@ endif
 fastqc1:	setup FastQC/${SAMPLE}_raw_R1_fastqc/fastqc_data.txt FastQC/${SAMPLE}_raw_R2_fastqc/fastqc_data.txt
 
 FastQC/${SAMPLE}_raw_R1_fastqc/fastqc_data.txt:	${SAMPLE}_raw_R1.fq
-	fastqc  $(FASTQC_OPTIONS)  --outdir=FastQC  ${SAMPLE}_raw_R1.fq
+	fastqc  ${FASTQC_OPTIONS}  --outdir=FastQC  ${SAMPLE}_raw_R1.fq
 
 FastQC/${SAMPLE}_raw_R2_fastqc/fastqc_data.txt:	${SAMPLE}_raw_R2.fq
-	fastqc  $(FASTQC_OPTIONS)  --outdir=FastQC  ${SAMPLE}_raw_R2.fq
+	fastqc  ${FASTQC_OPTIONS}  --outdir=FastQC  ${SAMPLE}_raw_R2.fq
 
 ${SAMPLE}_raw_R1.fq:	${RAWREAD1FQ}
 ifeq ("$(wildcard ${SAMPLE}_raw_R1.fq)","")
@@ -156,22 +156,22 @@ trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
 
 ### FastQC again to check the quality of the trimmed and tagdusted reads.
 #
-fastqc2:	FastQC/$(SAMPLE)_clean_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_clean_R2_fastqc/fastqc_data.txt
+fastqc2:	FastQC/${SAMPLE}_clean_R1_fastqc/fastqc_data.txt FastQC/${SAMPLE}_clean_R2_fastqc/fastqc_data.txt
 
-FastQC/$(SAMPLE)_clean_R1_fastqc/fastqc_data.txt:	$(SAMPLE)_clean_R1.fq
-	fastqc  $(FASTQC_OPTIONS)  --outdir=FastQC  $(SAMPLE)_clean_R1.fq
+FastQC/${SAMPLE}_clean_R1_fastqc/fastqc_data.txt:	${SAMPLE}_clean_R1.fq
+	fastqc  ${FASTQC_OPTIONS}  --outdir=FastQC  ${SAMPLE}_clean_R1.fq
 
-FastQC/$(SAMPLE)_clean_R2_fastqc/fastqc_data.txt:	$(SAMPLE)_clean_R2.fq
-	fastqc  $(FASTQC_OPTIONS)  --outdir=FastQC  $(SAMPLE)_clean_R2.fq
+FastQC/${SAMPLE}_clean_R2_fastqc/fastqc_data.txt:	${SAMPLE}_clean_R2.fq
+	fastqc  ${FASTQC_OPTIONS}  --outdir=FastQC  ${SAMPLE}_clean_R2.fq
 
 
 ### Generate and print basic sample statistics.
 #
-$(SAMPLE).stats:	$(SAMPLE)_raw_R1.fq $(SAMPLE)_raw_R2.fq \
-			FastQC/$(SAMPLE)_raw_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_raw_R2_fastqc/fastqc_data.txt \
- 			$(SAMPLE)_clean_R1.fq $(SAMPLE)_clean_R2.fq \
- 			FastQC/$(SAMPLE)_clean_R1_fastqc/fastqc_data.txt FastQC/$(SAMPLE)_clean_R2_fastqc/fastqc_data.txt
-	sstats-pe.sh $(SAMPLE)
+${SAMPLE}.stats:	${SAMPLE}_raw_R1.fq ${SAMPLE}_raw_R2.fq \
+			FastQC/${SAMPLE}_raw_R1_fastqc/fastqc_data.txt FastQC/${SAMPLE}_raw_R2_fastqc/fastqc_data.txt \
+ 			${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq \
+ 			FastQC/${SAMPLE}_clean_R1_fastqc/fastqc_data.txt FastQC/${SAMPLE}_clean_R2_fastqc/fastqc_data.txt
+	sstats-pe.sh ${SAMPLE}
 
 
 ### STAR alignment.
@@ -184,14 +184,14 @@ endif
 	cd ${GENOME_DIR}/STAR && \
 	STAR --runMode genomeGenerate --runThreadN ${THREADS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
 
-STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	${GENOME_DIR}/STAR/SAindex  $(SAMPLE)_clean_R1.fq $(SAMPLE)_clean_R2.fq
+STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	${GENOME_DIR}/STAR/SAindex  ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq
 ifeq ("$(wildcard ./STARdir)","")
 	mkdir STARdir
 endif
 	cd STARdir && \
 	STAR --runMode alignReads --limitBAMsortRAM 19114876484 --runThreadN ${THREADS} \
 		--outSAMtype BAM SortedByCoordinate --outSAMorder Paired  --outFileNamePrefix ${SAMPLE}_STAR_ \
-		--genomeDir ${GENOME_DIR}/STAR  --readFilesIn ../$(SAMPLE)_clean_R1.fq ../$(SAMPLE)_clean_R2.fq
+		--genomeDir ${GENOME_DIR}/STAR  --readFilesIn ../${SAMPLE}_clean_R1.fq ../${SAMPLE}_clean_R2.fq
 
 ${SAMPLE}_proper.bam:	STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam
 	samtools view -b -f 2 -F 256 -@ ${THREADS} STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam > ${SAMPLE}_proper.bam
@@ -233,7 +233,7 @@ cleanup:
 	-\mv ${SAMPLE}_nocumi_R1.fq ${SAMPLE}_nocumi_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_clean.fastq _SCRATCH/
-	-\mkdir STORE-$(SAMPLE)
+	-\mkdir STORE-${SAMPLE}
 	-\mv FastQC STARdir STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_proper.bam STORE-${SAMPLE}/
@@ -242,5 +242,5 @@ cleanup:
 #
 finishup:
 	-\rm -rf _SCRATCH
-	zip -r STORE-$(SAMPLE) STORE-$(SAMPLE)
-	-\rm -rf STORE-$(SAMPLE)
+	zip -r STORE-${SAMPLE} STORE-${SAMPLE}
+	-\rm -rf STORE-${SAMPLE}
