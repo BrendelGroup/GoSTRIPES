@@ -68,7 +68,7 @@ all:	setup fastqc1 fastqc2 \
 	${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq \
 	${SAMPLE}_clean.fastq \
 	${SAMPLE}_proper.bam \
- 	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq ${SAMPLE}_stats \
+ 	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq ${SAMPLE}.stats \
 	alignments/${SAMPLE}.sam \
 	alignments/Scrubbed-${SAMPLE}.sam
 
