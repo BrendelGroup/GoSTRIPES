@@ -63,9 +63,7 @@ all:	setup fastqc1 fastqc2 \
 	${SAMPLE}_noa_R1.fq ${SAMPLE}_noa_R2.fq \
 	${SAMPLE}_nob_R1.fq ${SAMPLE}_nob_R2.fq \
 	trm_${SAMPLE}.fastq unt_${SAMPLE}.fastq \
-	${SAMPLE}_noc.fastq ${SAMPLE}_noc_R1.fq ${SAMPLE}_noc_R2.fq \
-	${SAMPLE}_nocumi_R1.fq ${SAMPLE}_nocumi_R2.fq \
-	${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq \
+	${SAMPLE}_nod.fastq \
 	${SAMPLE}_clean.fastq \
 	${SAMPLE}_proper.bam \
  	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq ${SAMPLE}.stats \
@@ -128,6 +126,7 @@ endif
 	cutadapt -j ${THREADS} -g ^${ADAPTER} -e 0 \
 		-o $*_noa_R1.fq -p $*_noa_R2.fq  $*_umi_R1.fq $*_umi_R2.fq > cutdapter_noa_logfile.txt
 
+
 ### More scrubbing:
 #
 %_nob_R1.fq %_nob_R2.fq:	%_noa_R1.fq %_noa_R2.fq
@@ -137,17 +136,17 @@ endif
 trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
 	selectAdapterTrimmedReads.pl -f $*_noa_R1.fq -t $*_nob_R1.fq -r $*_noa_R2.fq -o $* > adapter_trimming_nob_logfile.txt
 
-%_noc.fastq %_noc_R1.fq %_noc_R2.fq:	trm_%.fastq
-	selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq
-	fastq-deinterleave $*_noc
-
-%_nocumi_R1.fq %_nocumi_R2.fq:	%_noc.fastq
-	umi_tools extract -I $*_noc_R1.fq -p ${UMI} --read2-in=$*_noc_R2.fq -S $*_nocumi_R1.fq --read2-out=$*_nocumi_R2.fq
-
-%_nod_R1.fq %_nod_R2.fq %_nod.fastq:	%_nocumi_R1.fq %_nocumi_R2.fq
-	cutadapt -j ${THREADS} -g ^${ADAPTER} -e 0 \
-		-o $*_nod_R1.fq -p $*_nod_R2.fq  $*_nocumi_R1.fq $*_nocumi_R2.fq > cutadapter_nod_logfile.txt
-	fastq-interleave $*_nod_R1.fq $*_nod_R2.fq > $*_nod.fastq
+%_nod.fastq:	trm_%.fastq
+	if [ -s trm_$*.fastq ]; then \
+	  selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq; \
+	  fastq-deinterleave $*_noc; \
+	  umi_tools extract -I $*_noc_R1.fq -p ${UMI} --read2-in=$*_noc_R2.fq -S $*_nocumi_R1.fq --read2-out=$*_nocumi_R2.fq; \
+	  cutadapt -j ${THREADS} -g ^${ADAPTER} -e 0 \
+		-o $*_nod_R1.fq -p $*_nod_R2.fq  $*_nocumi_R1.fq $*_nocumi_R2.fq > cutadapter_nod_logfile.txt; \
+	  fastq-interleave $*_nod_R1.fq $*_nod_R2.fq > $*_nod.fastq; \
+	else \
+ 	  touch $*_nod.fastq; \
+	fi
 
 %_clean.fastq %_clean_R1.fq %_clean_R2.fq:	%_nod.fastq unt_%.fastq
 	cat $*_nod.fastq unt_$*.fastq > $*_clean.fastq
