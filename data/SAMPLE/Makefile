@@ -21,8 +21,10 @@
 # system and preferences.
 
 BASEDIR  = ${CURDIR}/..
-RAWREAD1 = ${BASEDIR}/downloads/SAMPLE_R1.fastq
-RAWREAD2 = ${BASEDIR}/downloads/SAMPLE_R2.fastq
+RAWREAD1 = SAMPLE_R1
+RAWREAD2 = SAMPLE_R2
+RAWREAD1FQ = ${BASEDIR}/downloads/${RAWREAD1}.fq
+RAWREAD2FQ = ${BASEDIR}/downloads/${RAWREAD2}.fq
 
 UMI     = NNNNNNNN
 ADAPTER = TATAGGG
