@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: December 16, 2018.
+# Version: January 6, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
