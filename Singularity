@@ -13,7 +13,6 @@ From: ubuntu:18.04
     apt -y install cpanminus
     apt -y install openjdk-8-jdk
     apt -y install software-properties-common
-    apt -y install last-align
     apt -y install libcairo2-dev
     apt -y install libcurl4-openssl-dev
     apt -y install libcurl4-gnutls-dev
