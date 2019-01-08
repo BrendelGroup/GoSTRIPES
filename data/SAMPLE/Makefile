@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: January 7, 2019.
+# Version: January 8, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -42,11 +42,20 @@ RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
 # Options for programs called in the GoSTRIPES workflow:
 #
 FASTQC_OPTIONS        = --threads 2  --extract
-SAMTOOLS_SORT_OPTIONS = -m 7G -@ 4
-SORT_BUFFER_SIZE      = 20G
 
+TRIMMOMATIC_THREADS   = 6
 TrueSeq2PE            = /opt/Trimmomatic-0.38/adapters/TruSeq2-PE.fa
-THREADS               = 6
+
+TAGDUST_THREADS       = 6
+TAGDUST_OPTIONS       = -dust 97 -t ${TAGDUST_THREADS} -fe 3
+
+MIN_READ_LENGTH       = 25
+CUTADAPT_THREADS      = 6
+
+STAR_THREADS          = 6
+
+SAMTOOLS_THREADS      = 6
+SAMTOOLS_SORT_OPTIONS = -m 7G -@ ${SAMTOOLS_THREADS}
 
 
 ################################################################################
@@ -104,13 +113,13 @@ endif
 #
 %_trimmed_R1.fq %_trimmed_R2.fq %_unpaired_R1.fq %_unpaired_R2.fq:	%_raw_R1.fq %_raw_R2.fq
 	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar PE \
-	-threads 6 \
+	-threads ${TRIMMOMATIC_THREADS} \
 	$*_raw_R1.fq $*_raw_R2.fq \
 	$*_trimmed_R1.fq $*_unpaired_R1.fq $*_trimmed_R2.fq $*_unpaired_R2.fq \
 	ILLUMINACLIP:${TrueSeq2PE}:2:30:10 TRAILING:20 MINLEN:25
 
 %_tagdusted_READ1.fq %_tagdusted_READ2.fq %_tagdusted_un_READ1.fq %_tagdusted_un_READ2.fq:	%_trimmed_R1.fq %_trimmed_R2.fq
-	tagdust -ref ${RNAfile} -dust 97 -t ${THREADS} -fe 3 -1 R:N $*_trimmed_R1.fq $*_trimmed_R2.fq  -o $*_tagdusted
+	tagdust -ref ${RNAfile} ${TAGDUST_OPTIONS} -1 R:N $*_trimmed_R1.fq $*_trimmed_R2.fq  -o $*_tagdusted
 
 
 ### Getting reads matching the specified PATTERN and removing the tag sequences.
@@ -123,14 +132,14 @@ endif
 	umi_tools extract -I $*_select_R1.fq -p ${UMI} --read2-in=$*_select_R2.fq -S $*_umi_R1.fq --read2-out=$*_umi_R2.fq
 
 %_noa_R1.fq %_noa_R2.fq:	%_umi_R1.fq %_umi_R2.fq
-	cutadapt -j ${THREADS} -g ^${ADAPTER} -e 0 \
-		-o $*_noa_R1.fq -p $*_noa_R2.fq  $*_umi_R1.fq $*_umi_R2.fq > cutdapter_noa_logfile.txt
+	cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${ADAPTER} -e 0 \
+		-o $*_noa_R1.fq -p $*_noa_R2.fq  $*_umi_R1.fq $*_umi_R2.fq > cutadapter_noa_logfile.txt
 
 
 ### More scrubbing:
 #
 %_nob_R1.fq %_nob_R2.fq:	%_noa_R1.fq %_noa_R2.fq
-	cutadapt -j ${THREADS} --front=CCTACACGACGCTCTTCCGATCT --overlap=10 --error-rate=0.09 \
+	cutadapt -j ${CUTADAPT_THREADS} --front=CCTACACGACGCTCTTCCGATCT --overlap=10 --error-rate=0.09 \
 		-o $*_nob_R1.fq -p $*_nob_R2.fq $*_noa_R1.fq $*_noa_R2.fq > cutadapter_nob_logfile.txt
 
 trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
@@ -141,7 +150,7 @@ trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
 	  selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq; \
 	  fastq-deinterleave $*_noc; \
 	  umi_tools extract -I $*_noc_R1.fq -p ${UMI} --read2-in=$*_noc_R2.fq -S $*_nocumi_R1.fq --read2-out=$*_nocumi_R2.fq; \
-	  cutadapt -j ${THREADS} -g ^${ADAPTER} -e 0 \
+	  cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${ADAPTER} -e 0 \
 		-o $*_nod_R1.fq -p $*_nod_R2.fq  $*_nocumi_R1.fq $*_nocumi_R2.fq > cutadapter_nod_logfile.txt; \
 	  fastq-interleave $*_nod_R1.fq $*_nod_R2.fq > $*_nod.fastq; \
 	else \
@@ -181,29 +190,29 @@ ifeq ("$(wildcard ${GENOME_DIR}/STAR)","")
 	mkdir ${GENOME_DIR}/STAR
 endif
 	cd ${GENOME_DIR}/STAR && \
-	STAR --runMode genomeGenerate --runThreadN ${THREADS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
+	STAR --runMode genomeGenerate --runThreadN ${STAR_THREADS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
 
 STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	${GENOME_DIR}/STAR/SAindex  ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq
 ifeq ("$(wildcard ./STARdir)","")
 	mkdir STARdir
 endif
 	cd STARdir && \
-	STAR --runMode alignReads --limitBAMsortRAM 19114876484 --runThreadN ${THREADS} \
+	STAR --runMode alignReads --limitBAMsortRAM 19114876484 --runThreadN ${STAR_THREADS} \
 		--outSAMtype BAM SortedByCoordinate --outSAMorder Paired  --outFileNamePrefix ${SAMPLE}_STAR_ \
 		--genomeDir ${GENOME_DIR}/STAR  --readFilesIn ../${SAMPLE}_clean_R1.fq ../${SAMPLE}_clean_R2.fq
 
 ${SAMPLE}_proper.bam:	STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam
-	samtools view -b -f 2 -F 256 -@ ${THREADS} STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam > ${SAMPLE}_proper.bam
+	samtools view -b -f 2 -F 256 -@ ${SAMTOOLS_THREADS} STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam > ${SAMPLE}_proper.bam
 
 alignments/${SAMPLE}.bam:	${SAMPLE}_proper.bam
 ifeq ("$(wildcard ./alignments)","")
 	mkdir alignments
 endif
-	samtools sort -n ${SAMPLE}_proper.bam | \
+	samtools sort ${SAMTOOLS_SORT_OPTIONS} -n ${SAMPLE}_proper.bam | \
 	samtools fixmate -rm - - | samtools sort - | samtools markdup -r - alignments/${SAMPLE}.bam
 
 alignments/${SAMPLE}.sam:	alignments/${SAMPLE}.bam
-	samtools sort -n -O SAM alignments/${SAMPLE}.bam > alignments/${SAMPLE}.sam
+	samtools sort ${SAMTOOLS_SORT_OPTIONS} -n -O SAM alignments/${SAMPLE}.bam > alignments/${SAMPLE}.sam
 
 alignments/Scrubbed-${SAMPLE}.sam:	alignments/${SAMPLE}.sam
 	cd alignments && scrubSAMfile.pl -s 3 -i 50 -I 1000 -t 1500 -o ${SAMPLE}.sam -r ${SAMPLE}.sam \
