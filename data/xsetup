@@ -49,10 +49,11 @@ echo "run commands using the gostripes.simg container."
 echo ""
 echo "source ${installdir}/../bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/gostripes.simg"
 echo ""
-echo "Indeed, now the following will run the demo workflow:"
+echo "Indeed, now the following will show and run the demo workflow:"
 echo ""
 echo "cd STRIPES/SAMPLE"
 echo '$rws make -n'
+echo '$rws make'
 echo ""
 echo "After you have inspected the output, you can run in succession"
 echo ""
