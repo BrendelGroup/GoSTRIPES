@@ -7,12 +7,14 @@ From: ubuntu:18.04
     Please see https://github.com/BrendelGroup/GoSTRIPES for complete documentation.
 
 %post
+    export DEBIAN_FRONTEND=noninteractive
     apt -y update
     apt -y install build-essential
     apt -y install bc git tcsh tzdata unzip zip wget
     apt -y install cpanminus
     apt -y install openjdk-8-jdk
     apt -y install software-properties-common
+    apt -y install libbz2-dev
     apt -y install libcairo2-dev
     apt -y install libcurl4-openssl-dev
     apt -y install libcurl4-gnutls-dev
@@ -43,16 +45,16 @@ From: ubuntu:18.04
     pip3 install --upgrade cutadapt
     #### Install
     cd /opt
-    wget https://github.com/FelixKrueger/TrimGalore/archive/0.5.0.zip
-    mv 0.5.0.zip TrimGalore-0.5.0.zip
-    unzip TrimGalore-0.5.0.zip
+    wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.4.zip
+    mv 0.6.4.zip TrimGalore-0.6.4.zip
+    unzip TrimGalore-0.6.4.zip
 
     echo 'Installing Trimmomatic from http://www.usadellab.org/cms/index.php?page=trimmomatic '
     #### Install
     cd /opt
-    wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip
-    unzip Trimmomatic-0.38.zip
-#   Use:	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar
+    wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.39.zip
+    unzip Trimmomatic-0.39.zip
+#   Use:	java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar
 
     echo 'Installing TagDust from https://sourceforge.net/projects/tagdust/files/latest/download '
     #### Install
@@ -70,12 +72,12 @@ From: ubuntu:18.04
     echo 'Installing SRATOOLKIT from http://www.ncbi.nlm.nih.gov/books/NBK158900/ '
     ###### Install
     cd /opt
-    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.9.2/sratoolkit.2.9.2-ubuntu64.tar.gz
-    tar -xzf sratoolkit.2.9.2-ubuntu64.tar.gz
+    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz
+    tar -xzf sratoolkit.2.10.0-ubuntu64.tar.gz
 
     echo 'Installing UMI-tools from https://github.com/CGATOxford/UMI-tools '
     #### Install
-    pip install --upgrade umi-tools
+    pip3 install --upgrade umi-tools
 
 
 ### Read mapping
@@ -198,12 +200,12 @@ From: ubuntu:18.04
     export PATH=$PATH:/opt/FastQC
     export PATH=$PATH:/opt/GoSTRIPES/bin
     export PATH=$PATH:/opt/hisat2
-    export PATH=$PATH:/opt/sratoolkit.2.8.2-ubuntu64/bin
+    export PATH=$PATH:/opt/sratoolkit.2.10.0-ubuntu64/bin
     export PATH=$PATH:/opt/STAR/bin/Linux_x86_64
-    export PATH=$PATH:/opt/TrimGalore-0.5.0
+    export PATH=$PATH:/opt/TrimGalore-0.6.4
 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/
 
 %labels
     Maintainer vpbrendel
-    Version v1.0
+    Version v1.1

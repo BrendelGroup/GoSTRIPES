@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: January 8, 2019.
+# Version: September 26, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -44,7 +44,7 @@ RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
 FASTQC_OPTIONS        = --threads 2  --extract
 
 TRIMMOMATIC_THREADS   = 6
-TrueSeq2PE            = /opt/Trimmomatic-0.38/adapters/TruSeq2-PE.fa
+TrueSeq2PE            = /opt/Trimmomatic-0.39/adapters/TruSeq2-PE.fa
 
 TAGDUST_THREADS       = 6
 TAGDUST_OPTIONS       = -dust 97 -t ${TAGDUST_THREADS} -fe 3
@@ -112,7 +112,7 @@ endif
 ### Trimming the reads and removing reads that match rRNA targets.
 #
 %_trimmed_R1.fq %_trimmed_R2.fq %_unpaired_R1.fq %_unpaired_R2.fq:	%_raw_R1.fq %_raw_R2.fq
-	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar PE \
+	java -jar /opt/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
 	-threads ${TRIMMOMATIC_THREADS} \
 	$*_raw_R1.fq $*_raw_R2.fq \
 	$*_trimmed_R1.fq $*_unpaired_R1.fq $*_trimmed_R2.fq $*_unpaired_R2.fq \
