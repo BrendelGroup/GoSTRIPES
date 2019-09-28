@@ -14,7 +14,7 @@ git clone https://githup.com/GoSTRIPES
 cd /scratch/TRYgoSTRIPES
 ```
 
-Now you can run the [xsetup_Sc](./data/xsetup_SC) from the _templates_
+Now run the [xsetup_Sc](./templates/xsetup_Sc) script from the _templates_
 directory, and you'll be good to go:
 
 ```bash
