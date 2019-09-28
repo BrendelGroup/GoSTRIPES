@@ -1,0 +1,32 @@
+#!/bin/bash
+
+EXPERIMENT=demo
+
+SAMPLES=`cut -f1 samples.tsv | tail -n +2`
+
+echo ""
+echo "Samples are set as:"
+echo ""
+echo $SAMPLES
+echo ""
+echo ""
+date
+
+
+i=0
+for sample in ${SAMPLES[@]}
+do
+	sampledir=$(echo "${EXPERIMENT}_s_${sample}")
+	samplelabel=${EXPERIMENT}_s_${sample}
+
+	cd ${sampledir}
+	echo "Now in directory ${sampledir} ..."
+	date
+	$rws make >& err
+	cd ..
+	date
+	echo "... done"
+	((++i))
+done
+echo "... all done!"
+date
