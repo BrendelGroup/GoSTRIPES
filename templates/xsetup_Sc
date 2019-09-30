@@ -12,14 +12,14 @@ echo "To set up a working directory, go to some clean directory and"
 echo "execute this script, e.g."
 echo ""
 echo "  cd /projects/TRYgoSTRIPES"
-echo "  ~/GoSTRIPES/data/xsetup"
+echo "  ~/GoSTRIPES/templates/xsetup_Sc"
 echo ""
 echo "This will put required data from the GoSTRIPES data directory"
 echo "and required repositories (including Singularity Hub) into"
 echo "your current working directory."
 echo ""
 
-installdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+installdir="$( cd $( dirname "${BASH_SOURCE[0]}" )/..  && pwd )"
 workingdir="$( pwd )"
 
 mkdir ./STRIPES
@@ -28,13 +28,13 @@ singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
 
 mkdir ScGENOME
 cd ScGENOME
-cp ${installdir}/ScGENOME/0README ./
-cp ${installdir}/ScGENOME/rna_coding.fasta ./
+cp ${installdir}/data/ScGENOME/0README ./
+cp ${installdir}/data/ScGENOME/rna_coding.fasta ./
 source 0README
 cd ..
 
-cp -r ${installdir}/downloads ./
-cp -r ${installdir}/SAMPLE ./
+cp -r ${installdir}/data/downloads ./
+cp ${installdir}/templates/samples.tsv ./
 
 echo "Here we are and this is what we have now:"
 echo ""
@@ -47,12 +47,15 @@ echo ""
 echo 'Execute the following line, which will set up $rws as a shortcut to'
 echo "run commands using the gostripes.simg container."
 echo ""
-echo "source ${installdir}/../bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/gostripes.simg"
+echo "source ${installdir}/bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/gostripes.simg"
 echo ""
-echo "Indeed, now the following will run the demo workflow:"
 echo ""
-echo "cd STRIPES/SAMPLE"
+echo "Indeed, now the following will show and run the demo workflow:"
+echo ""
+echo "${installdir}/templates/xsetup_samples"
+echo "cd demo_s_mock"
 echo '$rws make -n'
+echo '$rws make'
 echo ""
 echo "After you have inspected the output, you can run in succession"
 echo ""
@@ -62,4 +65,20 @@ echo ""
 echo "which cleans up your working directory. The ultimate product of our"
 echo "workflow will be the mapping of the cleaned-up read pairs in the"
 echo ".bam and .sam files in the alignments directory."
-
+echo ""
+echo "Note: Typically, you will have multiple samples to analyze. The file"
+echo "      samples.tsv is used to record all the samples (for this demo"
+echo "      there is only one sample). To run all the samples, you can run"
+echo "      the following commands, in the STRIPES directory, following the"
+echo "      xsetup_samples step:"
+echo ""
+echo "${installdir}/templates/xrun_samples"
+echo "${installdir}/templates/xcleanup_samples"
+echo ""
+echo "This will generate all the alignment files and record the results in"
+echo "file bamfiles.tsv, which can be used for input to TSRchitect (see"
+echo "https://github.com/vpbrendel/TSRchitect/wiki/FAQ)."
+echo ""
+echo "Note: If the demo fails in your attempts, a fair possibility is that"
+echo "      you did not execute the source '.. xworkStripes ..' command"
+echo "      discussed above. Please do that first!"

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+TEMPLATEDIR=$( dirname "${BASH_SOURCE[0]}" )
+EXPERIMENT=demo
+
+SAMPLES=`cut -f1 samples.tsv | tail -n +2`
+READFILESTEM=(`cut -f3 samples.tsv | tail -n +2`)
+
+echo ""
+echo "Samples are set as:"
+echo ""
+echo $SAMPLES
+echo ""
+echo ""
+echo "Read file stems are set as:"
+echo ""
+echo ${READFILESTEM[@]}
+echo ""
+echo ""
+
+
+i=0
+for sample in ${SAMPLES[@]}
+do
+	sampledir=$(echo "${EXPERIMENT}_s_${sample}")
+	samplelabel=${EXPERIMENT}_s_${sample}
+	read1=$(echo "${READFILESTEM[i]}_R1")
+	read2=$(echo "${READFILESTEM[i]}_R2")
+
+	mkdir ${sampledir}
+	sed -e "s#SAMPLE_R1#${read1}#; s#SAMPLE_R2#${read2}#; s#demo#${samplelabel}#; s#TRIMMOMATIC_THREADS   = 6#TRIMMOMATIC_THREADS   = 8#; s#TAGDUST_THREADS       = 6#TAGDUST_THREADS       = 8#; s#CUTADAPT_THREADS      = 6#CUTADAPT_THREADS      = 8#; s#STAR_THREADS          = 6#STAR_THREADS          = 8#; s#SAMTOOLS_THREADS      = 6#SAMTOOLS_THREADS      = 8#;" ${TEMPLATEDIR}/Makefile_Sc > ${sampledir}/Makefile
+	((++i))
+done

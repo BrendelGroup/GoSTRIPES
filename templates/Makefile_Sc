@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: September 26, 2019.
+# Version: September 27, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -52,6 +52,7 @@ TAGDUST_OPTIONS       = -dust 97 -t ${TAGDUST_THREADS} -fe 3
 MIN_READ_LENGTH       = 25
 CUTADAPT_THREADS      = 6
 
+STAR_INDEX_OPTIONS    = --genomeSAindexNbases 10
 STAR_THREADS          = 6
 
 SAMTOOLS_THREADS      = 6
@@ -77,7 +78,8 @@ all:	setup fastqc1 fastqc2 \
 	${SAMPLE}_proper.bam \
  	${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq ${SAMPLE}.stats \
 	alignments/${SAMPLE}.sam \
-	alignments/Scrubbed-${SAMPLE}.sam
+	alignments/Scrubbed-${SAMPLE}.sam \
+	${SAMPLE}.bam
 
 .PHONY:	setup
 
@@ -100,12 +102,20 @@ FastQC/${SAMPLE}_raw_R2_fastqc/fastqc_data.txt:	${SAMPLE}_raw_R2.fq
 
 ${SAMPLE}_raw_R1.fq:	${RAWREAD1FQ}
 ifeq ("$(wildcard ${SAMPLE}_raw_R1.fq)","")
-	ln -rs ${RAWREAD1FQ} ${SAMPLE}_raw_R1.fq
+	if [ $(shell file ${RAWREAD1FQ} | egrep "gzip" | wc -l) -gt 0 ]; then \
+		gunzip -c ${RAWREAD1FQ} > ${SAMPLE}_raw_R1.fq; \
+	else \
+		ln -rs ${RAWREAD1FQ} ${SAMPLE}_raw_R1.fq; \
+	fi
 endif
 
 ${SAMPLE}_raw_R2.fq:	${RAWREAD2FQ}
 ifeq ("$(wildcard ${SAMPLE}_raw_R2.fq)","")
-	ln -rs ${RAWREAD2FQ} ${SAMPLE}_raw_R2.fq
+	if [ $(shell file ${RAWREAD2FQ} | egrep "gzip" | wc -l) -gt 0 ]; then \
+		gunzip -c ${RAWREAD2FQ} > ${SAMPLE}_raw_R2.fq; \
+	else \
+		ln -rs ${RAWREAD2FQ} ${SAMPLE}_raw_R2.fq; \
+	fi
 endif
 
 
@@ -190,7 +200,7 @@ ifeq ("$(wildcard ${GENOME_DIR}/STAR)","")
 	mkdir ${GENOME_DIR}/STAR
 endif
 	cd ${GENOME_DIR}/STAR && \
-	STAR --runMode genomeGenerate --runThreadN ${STAR_THREADS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
+	STAR --runMode genomeGenerate --runThreadN ${STAR_THREADS} ${STAR_INDEX_OPTIONS} --genomeDir ${GENOME_DIR}/STAR --genomeFastaFiles ${GENOME_FILE}
 
 STARdir/${SAMPLE}_STAR_Aligned.sortedByCoord.out.bam:	${GENOME_DIR}/STAR/SAindex  ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq
 ifeq ("$(wildcard ./STARdir)","")
@@ -216,11 +226,16 @@ alignments/${SAMPLE}.sam:	alignments/${SAMPLE}.bam
 
 alignments/Scrubbed-${SAMPLE}.sam:	alignments/${SAMPLE}.sam
 	cd alignments && scrubSAMfile.pl -s 3 -i 50 -I 1000 -t 1500 -o ${SAMPLE}.sam -r ${SAMPLE}.sam \
-		> scrubbing_${SAMPLE}_logfile.txt  &&  \
-		echo "" && \
-		echo "All done." && echo "Check the output in 'alignments' and optionally clean up with" && \
-		echo "	make cleanup" && \
-		echo "	make finishup"
+		> scrubbing_${SAMPLE}_logfile.txt
+
+${SAMPLE}.bam:	alignments/Scrubbed-${SAMPLE}.sam
+	samtools view -H alignments/${SAMPLE}.sam > header
+	cat header alignments/Scrubbed-${SAMPLE}.sam | samtools sort | samtools view -bh > ${SAMPLE}.bam
+	samtools index ${SAMPLE}.bam
+	echo "" && \
+	echo "All done." && echo "Check the output in 'alignments' and optionally clean up with" && \
+	echo "	make cleanup" && \
+	echo "	make finishup"
 
 
 
@@ -241,10 +256,16 @@ cleanup:
 	-\mv ${SAMPLE}_nocumi_R1.fq ${SAMPLE}_nocumi_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_clean.fastq _SCRATCH/
+	-\mv header _SCRATCH/
 	-\mkdir STORE-${SAMPLE}
 	-\mv FastQC STARdir STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_proper.bam STORE-${SAMPLE}/
+	-\mkdir logfiles
+	-\mv ${SAMPLE}_tagdusted_logfile.txt logfiles/
+	-\mv adapter_trimming*logfile.txt cutadapter*logfile.txt logfiles/
+	-\mv ${SAMPLE}.stats logfiles/
+	-\mv alignments/scrubbing_${SAMPLE}_logfile.txt logfiles/
 
 ### Finish up after cleanup.
 #
