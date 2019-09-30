@@ -25,7 +25,7 @@ do
 	echo "Now in directory ${sampledir} ..."
 	$rws make cleanup
 	$rws make finishup
-	echo "`pwd`/${sampledir}/${samplelabel}.bam" >> ../bamf3
+	echo "`pwd`/${samplelabel}.bam" >> ../bamf3
 	cd ..
 	echo "... done"
 	((++i))
