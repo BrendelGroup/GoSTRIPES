@@ -34,8 +34,8 @@ SAMPLE  = demo
 # Genome file locations:
 
 GENOME_DIR  = ${BASEDIR}/ScGENOME
-GENOME_FILE = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.fna
-GENOME_GFF  = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.gff
+GENOME_FILE = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa
+GENOME_GTF  = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.98.gtf
 RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
 
 
@@ -52,7 +52,7 @@ TAGDUST_OPTIONS       = -dust 97 -t ${TAGDUST_THREADS} -fe 3
 MIN_READ_LENGTH       = 25
 CUTADAPT_THREADS      = 6
 
-STAR_INDEX_OPTIONS    = --genomeSAindexNbases 10
+STAR_INDEX_OPTIONS    = --genomeSAindexNbases 10 --sjdbGTFfile ${GENOME_GTF}
 STAR_THREADS          = 6
 
 SAMTOOLS_THREADS      = 6
