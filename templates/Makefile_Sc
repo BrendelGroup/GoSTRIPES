@@ -258,15 +258,15 @@ cleanup:
 	-\mv ${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_clean.fastq _SCRATCH/
 	-\mv header _SCRATCH/
+	-\mkdir logfiles
+	-\mv STARdir/${SAMPLE}_STAR_Log.final.out logfiles/
 	-\mkdir STORE-${SAMPLE}
 	-\mv FastQC STARdir STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_proper.bam STORE-${SAMPLE}/
-	-\mkdir logfiles
 	-\mv ${SAMPLE}_tagdusted_logfile.txt logfiles/
 	-\mv adapter_trimming*logfile.txt cutadapter*logfile.txt logfiles/
 	-\mv ${SAMPLE}.stats logfiles/
-	-\mv STARdir/${SAMPLE}_STAR_Log.final.out logfiles/
 	-\mv alignments/scrubbing_${SAMPLE}_logfile.txt logfiles/
 
 ### Finish up after cleanup.
