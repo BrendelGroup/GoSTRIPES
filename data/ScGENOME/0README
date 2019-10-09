@@ -2,7 +2,7 @@
 
 # ... fetching from Ensembl Genomes
 
-YEAST_ANNOTATION_GTF="ftp://ftp.ensembl.org/pub/release-98/gff3/saccharomyces_cerevisiae/Saccharomyces_cerevisiae.R64-1-1.98.gtf.gz"
+YEAST_ANNOTATION_GTF="ftp://ftp.ensembl.org/pub/release-98/gtf/saccharomyces_cerevisiae/Saccharomyces_cerevisiae.R64-1-1.98.gtf.gz"
 YEAST_ASSEMBLY="ftp://ftp.ensembl.org/pub/release-98/fasta/saccharomyces_cerevisiae/dna/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa.gz"
 
 wget -O $(basename $YEAST_ANNOTATION_GTF) $YEAST_ANNOTATION_GTF
