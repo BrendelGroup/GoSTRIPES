@@ -266,6 +266,7 @@ cleanup:
 	-\mv ${SAMPLE}_tagdusted_logfile.txt logfiles/
 	-\mv adapter_trimming*logfile.txt cutadapter*logfile.txt logfiles/
 	-\mv ${SAMPLE}.stats logfiles/
+	-\mv STARdir/${SAMPLE}_Log.final.out logfiles/
 	-\mv alignments/scrubbing_${SAMPLE}_logfile.txt logfiles/
 
 ### Finish up after cleanup.
