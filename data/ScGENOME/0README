@@ -1,8 +1,13 @@
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/fungi/Saccharomyces_cerevisiae/latest_assembly_versions/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/fungi/Saccharomyces_cerevisiae/latest_assembly_versions/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.gff.gz
-gunzip *gz
-cp GCF_000146045.2_R64_genomic.gff GCF_000146045.2_R64_genomic.gffORIG
-sed -e "s/	region	/	chromosome	/;" GCF_000146045.2_R64_genomic.gffORIG > GCF_000146045.2_R64_genomic.gff
+#!/bin/bash
+
+# ... fetching from Ensembl Genomes
+
+YEAST_ANNOTATION_GTF="ftp://ftp.ensembl.org/pub/release-98/gtf/saccharomyces_cerevisiae/Saccharomyces_cerevisiae.R64-1-1.98.gtf.gz"
+YEAST_ASSEMBLY="ftp://ftp.ensembl.org/pub/release-98/fasta/saccharomyces_cerevisiae/dna/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa.gz"
+
+wget -O $(basename $YEAST_ANNOTATION_GTF) $YEAST_ANNOTATION_GTF
+wget -O $(basename $YEAST_ASSEMBLY)   $YEAST_ASSEMBLY
+gunzip Saccharomyces_cerevisiae.*gz
 
 #rRNA coding regions were collected from 
 #

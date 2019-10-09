@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: September 27, 2019.
+# Version: October 7, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -27,15 +27,15 @@ RAWREAD1FQ = ${BASEDIR}/downloads/${RAWREAD1}.fq
 RAWREAD2FQ = ${BASEDIR}/downloads/${RAWREAD2}.fq
 
 UMI     = NNNNNNNN
-ADAPTER = TATAGGG
-PATTERN = ${UMI}${ADAPTER}
+LINKER  = TATAGGG
+PATTERN = ${UMI}${LINKER}
 SAMPLE  = demo
 
 # Genome file locations:
 
 GENOME_DIR  = ${BASEDIR}/ScGENOME
-GENOME_FILE = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.fna
-GENOME_GFF  = ${GENOME_DIR}/GCF_000146045.2_R64_genomic.gff
+GENOME_FILE = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa
+GENOME_GTF  = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.98.gtf
 RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
 
 
@@ -52,12 +52,13 @@ TAGDUST_OPTIONS       = -dust 97 -t ${TAGDUST_THREADS} -fe 3
 MIN_READ_LENGTH       = 25
 CUTADAPT_THREADS      = 6
 
-STAR_INDEX_OPTIONS    = --genomeSAindexNbases 10
+STAR_INDEX_OPTIONS    = --genomeSAindexNbases 10 --sjdbGTFfile ${GENOME_GTF}
 STAR_THREADS          = 6
 
 SAMTOOLS_THREADS      = 6
 SAMTOOLS_SORT_OPTIONS = -m 7G -@ ${SAMTOOLS_THREADS}
 
+scrubSAMfile_OPTIONS  = -s 3 -i 50 -I 1000 -t 1500
 
 ################################################################################
 ### ! Typically there would be no need for further editing below this line ! ###
@@ -142,7 +143,7 @@ endif
 	umi_tools extract -I $*_select_R1.fq -p ${UMI} --read2-in=$*_select_R2.fq -S $*_umi_R1.fq --read2-out=$*_umi_R2.fq
 
 %_noa_R1.fq %_noa_R2.fq:	%_umi_R1.fq %_umi_R2.fq
-	cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${ADAPTER} -e 0 \
+	cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${LINKER} -e 0 \
 		-o $*_noa_R1.fq -p $*_noa_R2.fq  $*_umi_R1.fq $*_umi_R2.fq > cutadapter_noa_logfile.txt
 
 
@@ -160,7 +161,7 @@ trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
 	  selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq; \
 	  fastq-deinterleave $*_noc; \
 	  umi_tools extract -I $*_noc_R1.fq -p ${UMI} --read2-in=$*_noc_R2.fq -S $*_nocumi_R1.fq --read2-out=$*_nocumi_R2.fq; \
-	  cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${ADAPTER} -e 0 \
+	  cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${LINKER} -e 0 \
 		-o $*_nod_R1.fq -p $*_nod_R2.fq  $*_nocumi_R1.fq $*_nocumi_R2.fq > cutadapter_nod_logfile.txt; \
 	  fastq-interleave $*_nod_R1.fq $*_nod_R2.fq > $*_nod.fastq; \
 	else \
@@ -225,7 +226,7 @@ alignments/${SAMPLE}.sam:	alignments/${SAMPLE}.bam
 	samtools sort ${SAMTOOLS_SORT_OPTIONS} -n -O SAM alignments/${SAMPLE}.bam > alignments/${SAMPLE}.sam
 
 alignments/Scrubbed-${SAMPLE}.sam:	alignments/${SAMPLE}.sam
-	cd alignments && scrubSAMfile.pl -s 3 -i 50 -I 1000 -t 1500 -o ${SAMPLE}.sam -r ${SAMPLE}.sam \
+	cd alignments && scrubSAMfile.pl ${scrubSAMfile_OPTIONS} -o ${SAMPLE}.sam -r ${SAMPLE}.sam \
 		> scrubbing_${SAMPLE}_logfile.txt
 
 ${SAMPLE}.bam:	alignments/Scrubbed-${SAMPLE}.sam
@@ -257,11 +258,12 @@ cleanup:
 	-\mv ${SAMPLE}_nod.fastq ${SAMPLE}_nod_R1.fq ${SAMPLE}_nod_R2.fq _SCRATCH/
 	-\mv ${SAMPLE}_clean.fastq _SCRATCH/
 	-\mv header _SCRATCH/
+	-\mkdir logfiles
+	-\mv STARdir/${SAMPLE}_STAR_Log.final.out logfiles/
 	-\mkdir STORE-${SAMPLE}
 	-\mv FastQC STARdir STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_proper.bam STORE-${SAMPLE}/
-	-\mkdir logfiles
 	-\mv ${SAMPLE}_tagdusted_logfile.txt logfiles/
 	-\mv adapter_trimming*logfile.txt cutadapter*logfile.txt logfiles/
 	-\mv ${SAMPLE}.stats logfiles/
