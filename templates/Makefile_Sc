@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: October 7, 2019.
+# Version: October 10, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -36,7 +36,7 @@ SAMPLE  = demo
 GENOME_DIR  = ${BASEDIR}/ScGENOME
 GENOME_FILE = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa
 GENOME_GTF  = ${GENOME_DIR}/Saccharomyces_cerevisiae.R64-1-1.98.gtf
-RNAfile     = ${GENOME_DIR}/Sc_grRNA.fa
+RNAfile     = ${GENOME_DIR}/Sc_rRNA.fa
 
 
 # Options for programs called in the GoSTRIPES workflow:
