@@ -9,11 +9,5 @@ wget -O $(basename $YEAST_ANNOTATION_GTF) $YEAST_ANNOTATION_GTF
 wget -O $(basename $YEAST_ASSEMBLY)   $YEAST_ASSEMBLY
 gunzip Saccharomyces_cerevisiae.*gz
 
-#rRNA coding regions were collected from 
-#
-#	https://www.yeastgenome.org/search?category=locus&feature_type=rRNA_gene&page=0&q=rRNA_gene
-#
-#and saved as rna_coding.fasta. The file is used for removing rRNA contaminants
-#from the reads using tagdust.
-
-ln -rs rna_coding.fasta Sc_grRNA.fa
+#rRNA gene sequences were were collected from Ensembl and saved as
+#file Sc_rRNA.fa (4 genes).

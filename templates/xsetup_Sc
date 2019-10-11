@@ -29,7 +29,7 @@ singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
 mkdir ScGENOME
 cd ScGENOME
 cp ${installdir}/data/ScGENOME/0README ./
-cp ${installdir}/data/ScGENOME/rna_coding.fasta ./
+cp ${installdir}/data/ScGENOME/Sc_rRNA.fa ./
 source 0README
 cd ..
 
