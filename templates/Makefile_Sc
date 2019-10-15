@@ -1,6 +1,6 @@
 # Makefile_GoSTRIPES
 #
-# Version: October 10, 2019.
+# Version: October 15, 2019.
 #
 
 # Note that it is assumed that all required executables are in your $PATH.
@@ -137,7 +137,7 @@ endif
 #
 %_select_R1.fq %_select_R2.fq tmp_%.fastq:	%_tagdusted_READ1.fq %_tagdusted_READ2.fq
 	fastq-interleave $*_tagdusted_READ1.fq $*_tagdusted_READ2.fq > tmp_${SAMPLE}.fastq
-	selectReadsByPattern.pl -m ${PATTERN} -p -o ${SAMPLE}_select -r tmp_${SAMPLE}.fastq
+	selectReadsByPattern.pl -m ${PATTERN} -p -o ${SAMPLE}_select -r tmp_${SAMPLE}.fastq > select_$*_tagdusted_logfile.txt
 
 %_umi_R1.fq %_umi_R2.fq:	%_select_R1.fq %_select_R2.fq
 	umi_tools extract -I $*_select_R1.fq -p ${UMI} --read2-in=$*_select_R2.fq -S $*_umi_R1.fq --read2-out=$*_umi_R2.fq
@@ -158,7 +158,7 @@ trm_%.fastq unt_%.fastq:	%_noa_R1.fq %_nob_R1.fq %_noa_R2.fq
 
 %_nod.fastq:	trm_%.fastq
 	if [ -s trm_$*.fastq ]; then \
-	  selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq; \
+	  selectReadsByPattern.pl -m ${PATTERN} -p -i -o $*_noc.fastq -r trm_$*.fastq > select_trm_$*_logfile.txt; \
 	  fastq-deinterleave $*_noc; \
 	  umi_tools extract -I $*_noc_R1.fq -p ${UMI} --read2-in=$*_noc_R2.fq -S $*_nocumi_R1.fq --read2-out=$*_nocumi_R2.fq; \
 	  cutadapt -j ${CUTADAPT_THREADS} -m ${MIN_READ_LENGTH} -g ^${LINKER} -e 0 \
@@ -265,6 +265,7 @@ cleanup:
 	-\mv ${SAMPLE}_clean_R1.fq ${SAMPLE}_clean_R2.fq STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_proper.bam STORE-${SAMPLE}/
 	-\mv ${SAMPLE}_tagdusted_logfile.txt logfiles/
+	-\mv select*logfile.txt logfiles/
 	-\mv adapter_trimming*logfile.txt cutadapter*logfile.txt logfiles/
 	-\mv ${SAMPLE}.stats logfiles/
 	-\mv alignments/scrubbing_${SAMPLE}_logfile.txt logfiles/
