@@ -54,10 +54,10 @@ echo "Number of cleaned read pairs: ${CLNREAD_NB1}" >> ${SAMPLE}.stats
 
 CLNREAD_LGTH1=`awk 'NR==9' FastQC/${SAMPLE}_clean_R1_fastqc/fastqc_data.txt | awk -F" " '{print $3}'`
 CLNREAD_LGTH2=`awk 'NR==9' FastQC/${SAMPLE}_clean_R2_fastqc/fastqc_data.txt | awk -F" " '{print $3}'`
-echo "Trimmed read length range (per FastQC report): ${CLNREAD_LGTH1} (left reads), ${CLNREAD_LGTH2} (right reads)" >> ${SAMPLE}.stats
+echo "Cleaned read length range (per FastQC report): ${CLNREAD_LGTH1} (left reads), ${CLNREAD_LGTH2} (right reads)" >> ${SAMPLE}.stats
 CLNREAD_ML1=`cat ${SAMPLE}_clean_R1.fq | awk '{if(NR%4==2) printf "%.0f\n", length($1)}' > /tmp/${SAMPLE}_readlength1.txt; sort -n /tmp/${SAMPLE}_readlength1.txt | awk ' { a[i++]=$1; } END { printf "%.0f", a[int(i/2)]; }'`
 CLNREAD_ML2=`cat ${SAMPLE}_clean_R2.fq | awk '{if(NR%4==2) printf "%.0f\n", length($1)}' > /tmp/${SAMPLE}_readlength2.txt; sort -n /tmp/${SAMPLE}_readlength2.txt | awk ' { a[i++]=$1; } END { printf "%.0f", a[int(i/2)]; }'`
-echo "Median length of trimmed reads: ${CLNREAD_ML1} (left reads), ${CLNREAD_ML2} (right reads)" >> ${SAMPLE}.stats
+echo "Median length of cleaned reads: ${CLNREAD_ML1} (left reads), ${CLNREAD_ML2} (right reads)" >> ${SAMPLE}.stats
 
 CLNREAD_SZE1=`awk 'BEGIN{sum=0;}{if(NR%4==2){sum+=length($0);}}END{printf "%.0f", sum;}' ${SAMPLE}_clean_R1.fq`
 CLNREAD_SZE2=`awk 'BEGIN{sum=0;}{if(NR%4==2){sum+=length($0);}}END{printf "%.0f", sum;}' ${SAMPLE}_clean_R2.fq`
