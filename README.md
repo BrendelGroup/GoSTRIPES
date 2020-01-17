@@ -37,7 +37,9 @@ container. Please see the [HOWTO](./HOWTO.md) document for a worked example.
 
 ## Reference
 
-Robert A. Policastro, R. Taylor Raborn, Volker P. Brendel and Gabriel E. Zentner. (2020) Simple and efficient mapping of transcription start sites with STRIPE-seq. biorXiv. https://doi.org/10.1101/2020.01.16.905182. In Review.
+Robert A. Policastro, R. Taylor Raborn, Volker P. Brendel and Gabriel E. Zentner. (2020) 
+Simple and efficient mapping of transcription start sites with STRIPE-seq. biorXiv. 
+https://doi.org/10.1101/2020.01.16.905182. Submitted.
 
 
 ## Contact
