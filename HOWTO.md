@@ -10,7 +10,7 @@ called /scratch/TRYgoSTRIPES:
 
 ```bash
 cd
-git clone https://github.com/GoSTRIPES
+git clone https://github.com/BrendelGroup/GoSTRIPES
 cd /scratch/TRYgoSTRIPES
 ```
 
