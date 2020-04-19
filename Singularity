@@ -12,6 +12,7 @@ From: ubuntu:18.04
     apt -y install build-essential
     apt -y install bc git tcsh tzdata unzip zip wget
     apt -y install cpanminus
+    apt -y install cython cython3
     apt -y install openjdk-8-jdk
     apt -y install software-properties-common
     apt -y install libbz2-dev
@@ -72,8 +73,8 @@ From: ubuntu:18.04
     echo 'Installing SRATOOLKIT from http://www.ncbi.nlm.nih.gov/books/NBK158900/ '
     ###### Install
     cd /opt
-    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.0/sratoolkit.2.10.0-ubuntu64.tar.gz
-    tar -xzf sratoolkit.2.10.0-ubuntu64.tar.gz
+    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/sratoolkit.2.10.5-ubuntu64.tar.gz
+    tar -xzf sratoolkit.2.10.5-ubuntu64.tar.gz
 
     echo 'Installing UMI-tools from https://github.com/CGATOxford/UMI-tools '
     #### Install
@@ -200,7 +201,7 @@ From: ubuntu:18.04
     export PATH=$PATH:/opt/FastQC
     export PATH=$PATH:/opt/GoSTRIPES/bin
     export PATH=$PATH:/opt/hisat2
-    export PATH=$PATH:/opt/sratoolkit.2.10.0-ubuntu64/bin
+    export PATH=$PATH:/opt/sratoolkit.2.10.5-ubuntu64/bin
     export PATH=$PATH:/opt/STAR/bin/Linux_x86_64
     export PATH=$PATH:/opt/TrimGalore-0.6.4
 
