@@ -26,7 +26,7 @@ the text. Importantly, the script will ask you to execute something like the
 following in your shell (just copy/paste what the script shows):
 
 ```bash
-source ~/GoSTRIPES/bin/xworkStripes -b /scratch/TRYgoSTRIPES -i /scratch/TRYgoSTRIPES/STRIPES/gostripes.simg
+source ~/GoSTRIPES/bin/xworkStripes -b /scratch/TRYgoSTRIPES -i /scratch/TRYgoSTRIPES/STRIPES/gostripes.sif
 ```
 
 This command will set up the variable _rws_. In our example,
@@ -37,7 +37,7 @@ echo $rws
 should return 
 
 ```bash
-singularity exec -B /scratch/TRYgoSTRIPES /scratch/TRYgoSTRIPES/STRIPES/gostripes.simg
+singularity exec -B /scratch/TRYgoSTRIPES /scratch/TRYgoSTRIPES/STRIPES/gostripes.sif
 ```
 
 ## Executing the workflow

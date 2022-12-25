@@ -1,5 +1,5 @@
 bootstrap: docker
-From: ubuntu:18.04
+From: ubuntu:20.04
 
 %help
     This container provides portable & reproducible components for GoSTRIPES:
@@ -21,13 +21,11 @@ From: ubuntu:18.04
     apt -y install libcurl4-gnutls-dev
     apt -y install libudunits2-dev
     apt -y install libgd-dev
-    apt -y install libmariadb-client-lgpl-dev
+    apt -y install libmariadb-dev-compat
     apt -y install libpq-dev
     apt -y install libssl-dev
     apt -y install libtbb-dev
     apt -y install libxml2-dev
-    apt -y install python-minimal
-    apt -y install python-pip
     apt -y install python3-minimal
     apt -y install python3-pip
 
@@ -37,8 +35,8 @@ From: ubuntu:18.04
     echo 'Installing FASTQC from http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ '
     #### Install
     cd /opt
-    wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.8.zip
-    unzip fastqc_v0.11.8.zip
+    wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+    unzip fastqc_v0.11.9.zip
     chmod +x FastQC/fastqc
 
     echo 'Installing TRIM_GALORE from http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/ '
@@ -46,9 +44,9 @@ From: ubuntu:18.04
     pip3 install --upgrade cutadapt
     #### Install
     cd /opt
-    wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.4.zip
-    mv 0.6.4.zip TrimGalore-0.6.4.zip
-    unzip TrimGalore-0.6.4.zip
+    wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.7.zip
+    mv 0.6.7.zip TrimGalore-0.6.7.zip
+    unzip TrimGalore-0.6.7.zip
 
     echo 'Installing Trimmomatic from http://www.usadellab.org/cms/index.php?page=trimmomatic '
     #### Install
@@ -61,7 +59,8 @@ From: ubuntu:18.04
     #### Install
     cd /opt
     wget --content-disposition https://sourceforge.net/projects/tagdust/files/tagdust-2.33.tar.gz/download
-    tar -xzf tagdust-2.33.tar.gz 
+    tar -xzf *tagdust-2.33.tar.gz* 
+    \rm  *tagdust-2.33.tar.gz*
     cd tagdust-2.33/
     ./configure
     make
@@ -73,8 +72,8 @@ From: ubuntu:18.04
     echo 'Installing SRATOOLKIT from http://www.ncbi.nlm.nih.gov/books/NBK158900/ '
     ###### Install
     cd /opt
-    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.5/sratoolkit.2.10.5-ubuntu64.tar.gz
-    tar -xzf sratoolkit.2.10.5-ubuntu64.tar.gz
+    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.0.1/sratoolkit.3.0.1-ubuntu64.tar.gz
+    tar -xzf sratoolkit.3.0.1-ubuntu64.tar.gz
 
     echo 'Installing UMI-tools from https://github.com/CGATOxford/UMI-tools '
     #### Install
@@ -115,18 +114,19 @@ From: ubuntu:18.04
     apt -y install zlib1g-dev libbz2-dev liblzma-dev
     #### Install
     cd /opt
-    git clone git://github.com/samtools/htslib.git htslib
+    git clone http://github.com/samtools/htslib.git htslib
     cd htslib
-    make && make install
+    git submodule update --init --recursive
+    make && make install && make clean
 
     echo 'Installing SAMTOOLS from http://www.htslib.org/ '
     #### Prerequisites
     apt -y install ncurses-dev
     #### Install
     cd /opt
-    git clone git://github.com/samtools/samtools.git samtools
+    git clone http://github.com/samtools/samtools.git samtools
     cd samtools
-    make && make install
+    make && make install && make clean
 
 
 ### Genome utilities
@@ -136,41 +136,62 @@ From: ubuntu:18.04
     apt -y install libcairo2-dev libpango1.0-dev
     #### Install
     cd /opt
-    wget http://genometools.org/pub/genometools-1.5.10.tar.gz
-    tar -xzf genometools-1.5.10.tar.gz
-    cd genometools-1.5.10/
+    wget http://genometools.org/pub/genometools-1.6.2.tar.gz
+    tar -xzf genometools-1.6.2.tar.gz
+    cd genometools-1.6.2/
     make && make install
+
+    echo 'Installing bedtools from https://github.com/arq5x/bedtools2/ '
+    cd /opt
+    git clone https://github.com/arq5x/bedtools2.git
+    cd bedtools2/
+    make && make install && make clean
+
+    echo 'Installing bedops from https://github.com/bedops '
+    cd /opt
+    mkdir bedops && cd bedops
+    wget https://github.com/bedops/bedops/releases/download/v2.4.40/bedops_linux_x86_64-v2.4.40.tar.bz2
+    tar jxvf bedops_linux_x86_64-v2.4.40.tar.bz2
+    # ... creates bin directory with tool binaries; added to path below
+    \rm bedops_linux_x86_64-v2.4.40.tar.bz2
+
+    echo 'Installing gfftobed from https://github.com/jacobbierstedt/gfftobed.git '
+    cd /opt
+    git clone https://github.com/jacobbierstedt/gfftobed.git
+    cd gfftobed
+    make
+    cp gfftobed /usr/local/bin
 
 
 ### All things R
 
     echo 'Installing R'
-    #### 
-    export DEBIAN_FRONTEND=noninteractive
-    add-apt-repository -y ppa:marutter/rrutter3.5
-    add-apt-repository -y ppa:marutter/c2d4u3.5
+    ####
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
     apt -y update
-    apt -y install r-base-core r-base-dev
+    apt -y install r-base
     R CMD javareconf
 
-    echo 'Installing CRAN packages'
+    echo 'Installing CRAN and Bioconductor packages'
     ######
-    apt -y install r-cran-biocmanager
-    apt -y install r-cran-dplyr
-    apt -y install r-cran-ggplot2
-    apt -y install r-cran-gplots
-    apt -y install r-cran-gridextra
-    apt -y install r-cran-pastecs
-    apt -y install r-cran-rjava
-    apt -y install r-cran-sqldf
-    apt -y install r-cran-tidyr
-    apt -y install r-cran-venneuler
-    apt -y install r-cran-rcurl
-    apt -y install r-cran-xml2
-   
-    echo 'Installing other CRAN and Bioconductor packages'
-    ######
-    echo 'install.packages("R.devices", repos="http://mirror.las.iastate.edu/CRAN/", dependencies=TRUE)'   > R2install
+    echo 'install.packages("BiocManager", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'         > R2install
+    echo 'BiocManager::install(c("BiocVersion"), ask=FALSE)'                                              >> R2install
+    echo 'install.packages("dplyr", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("gplots", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'             >> R2install
+    echo 'install.packages("ggplot2", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'            >> R2install
+    echo 'install.packages("ggdendro", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'           >> R2install
+    echo 'install.packages("gtable", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'             >> R2install
+    echo 'install.packages("gridExtra", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'          >> R2install
+    echo 'install.packages("pastecs", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'            >> R2install
+    echo 'install.packages("RCurl", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("rJava", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("shiny", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("sqldf", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("tidyr", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'              >> R2install
+    echo 'install.packages("venneuler", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'          >> R2install
+    echo 'install.packages("XML", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'                >> R2install
+    echo 'install.packages("R.devices", repos="http://ftp.ussg.iu.edu/CRAN", dependencies=TRUE)'          >> R2install
     echo 'BiocManager::install(c("BiocGenerics", "GenomicRanges", "genomation", "TSRchitect"),ask=FALSE)' >> R2install
     echo 'BiocManager::install(c("bumphunter", "seqLogo", "ENCODExplorer", "edgeR"),ask=FALSE)'           >> R2install
     echo 'BiocManager::install(c("ChIPseeker", "ChIPpeakAnno"),ask=FALSE)'                                >> R2install
@@ -190,23 +211,24 @@ From: ubuntu:18.04
     make ebseq
     make install
 
-    echo 'Installing GoSTRIPES from git://github.com/BrendelGroup/GoSTRIPES '
+    echo 'Installing GoSTRIPES from https://github.com/BrendelGroup/GoSTRIPES '
     #### Install
     cd /opt
-    git clone git://github.com/BrendelGroup/GoSTRIPES
+    git clone https://github.com/BrendelGroup/GoSTRIPES
 
 
 %environment
     export LC_ALL=C
+    export PATH=$PATH:/opt/bedops/bin
     export PATH=$PATH:/opt/FastQC
     export PATH=$PATH:/opt/GoSTRIPES/bin
     export PATH=$PATH:/opt/hisat2
-    export PATH=$PATH:/opt/sratoolkit.2.10.5-ubuntu64/bin
+    export PATH=$PATH:/opt/sratoolkit.3.0.1-ubuntu64/bin
     export PATH=$PATH:/opt/STAR/bin/Linux_x86_64
-    export PATH=$PATH:/opt/TrimGalore-0.6.4
+    export PATH=$PATH:/opt/TrimGalore-0.6.7
 
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/
 
 %labels
     Maintainer vpbrendel
-    Version v1.1
+    Version v1.2

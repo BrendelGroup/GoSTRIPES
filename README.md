@@ -9,16 +9,16 @@ results; it is __open__ (source) and designed to be __scalable__ and
 __easy__ to use.
 
 
-## Quick Start [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1990)
+## Quick Start
 
-All the GoSTRIPE dependencies are encapsulated in a
-[Singularity](https://www.sylabs.io/docs/) container available from
-[Singularity Hub](https://singularity-hub.org/).
+All the GoSTRIPES dependencies are encapsulated in a
+[Singularity](https://apptainer.org/) container available from our
+[Singularity Hub](http://BrendelGroup.org/SingularityHub/).
 Thus, once you know what you are doing, execution could be as simple as
 
 ```
-singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
-singularity exec gostripes.simg make
+singularity pull https://BrendelGroup.org/SingularityHub/GoSTRIPES.sif
+singularity exec GoSTRIPES.sif make
 ```
 
 (assuming you have prepared a suitable makefile in your working directory).

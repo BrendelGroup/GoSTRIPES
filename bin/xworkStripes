@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# xworkStripes:  a little script to make workw with GoSTRIPES easier ...
+# xworkStripes:  a little script to make working with GoSTRIPES easier ...
 #              Alls this does is to set the variable rws (run with singularity)
 #              so that you can run commands from the GoSTRIPES container by
 #              simply preceding them with $rws .
@@ -64,8 +64,8 @@ if [[ $alliswell == 1 ]]
     echo "$HOSTNAME"; pwd; echo""; date; echo""
     rws="singularity exec -e -B $boundDir $GoSTRIPESimage"
 
-    echo "The rws variable has been set to:  $rws."
-    echo 'Run a command within the GoSTRIPES container by preceding it with  $rws .'
+    echo "The rws variable has been set to:  $rws"
+    echo 'Run a command within the GoSTRIPES container by preceding it with $rws.'
     echo ""
     echo "Example:"
     echo " which fastq-interleave"
@@ -76,5 +76,6 @@ if [[ $alliswell == 1 ]]
     echo "NOTE: You must invoke xworkStripes with 'source'."
     echo '      Otherwise $rws will not be available in your shell.'
     echo '      You might consider setting $rws as an enviroment variable.'
+    echo '      Another approach is to set rws as an alias.'
     export rws
 fi
