@@ -9,16 +9,16 @@ results; it is __open__ (source) and designed to be __scalable__ and
 __easy__ to use.
 
 
-## Quick Start [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/1990)
+## Quick Start
 
-All the GoSTRIPE dependencies are encapsulated in a
-[Singularity](https://www.sylabs.io/docs/) container available from
-[Singularity Hub](https://singularity-hub.org/).
+All the GoSTRIPES dependencies are encapsulated in a
+[Singularity](https://apptainer.org/) container available from our
+[Singularity Hub](http://BrendelGroup.org/SingularityHub/).
 Thus, once you know what you are doing, execution could be as simple as
 
 ```
-singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
-singularity exec gostripes.simg make
+singularity pull https://BrendelGroup.org/SingularityHub/GoSTRIPES.sif
+singularity exec GoSTRIPES.sif make
 ```
 
 (assuming you have prepared a suitable makefile in your working directory).
@@ -37,9 +37,11 @@ container. Please see the [HOWTO](./HOWTO.md) document for a worked example.
 
 ## Reference
 
-Robert A. Policastro, R. Taylor Raborn, Volker P. Brendel and Gabriel E. Zentner. (2020) 
-Simple and efficient mapping of transcription start sites with STRIPE-seq. biorXiv. 
-https://doi.org/10.1101/2020.01.16.905182. Submitted.
+__Robert A. Policastro, R. Taylor Raborn, Volker P. Brendel and Gabriel E. Zentner (2020)__
+ _Simple and efficient profiling of transcription initiation and transcript levels with STRIPE-seq._
+Genome Research 30, 910--823. [https://genome.cshlp.org/content/30/6/910.long](https://genome.cshlp.org/content/30/6/910.long).
+
+Original pre-print: [at BioRxiv](https://www.biorxiv.org/content/10.1101/2020.01.16.905182v1).
 
 
 ## Contact

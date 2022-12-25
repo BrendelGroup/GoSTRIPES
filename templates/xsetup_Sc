@@ -2,7 +2,7 @@
 #
 
 echo "Presumably you see this file because you already cloned GoSTRIPES"
-echo "by the following commands (assuming for this example that your cloned"
+echo "by the following commands (assuming for this example that you cloned"
 echo "into your home directory (~):"
 echo ""
 echo "  cd"
@@ -24,7 +24,7 @@ workingdir="$( pwd )"
 
 mkdir ./STRIPES
 cd ./STRIPES
-singularity pull --name gostripes.simg shub://BrendelGroup/GoSTRIPES
+singularity pull https://BrendelGroup.org/SingularityHub/GoSTRIPES.sif
 
 mkdir ScGENOME
 cd ScGENOME
@@ -36,7 +36,8 @@ cd ..
 cp -r ${installdir}/data/downloads ./
 cp ${installdir}/templates/samples.tsv ./
 
-echo "Here we are and this is what we have now:"
+echo "The following will show the files that have been prepared in our"
+echo "working directory:"
 echo ""
 pwd
 ls -RC
@@ -45,9 +46,9 @@ echo ""
 echo "We are ready!"
 echo ""
 echo 'Execute the following line, which will set up $rws as a shortcut to'
-echo "run commands using the gostripes.simg container."
+echo "run commands using the GoSTRIPES.sif apptainer:"
 echo ""
-echo "source ${installdir}/bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/gostripes.simg"
+echo "source ${installdir}/bin/xworkStripes -b ${workingdir} -i ${workingdir}/STRIPES/GoSTRIPES.sif"
 echo ""
 echo ""
 echo "Indeed, now the following will show and run the demo workflow:"
